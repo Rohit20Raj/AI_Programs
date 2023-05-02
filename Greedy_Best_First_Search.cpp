@@ -1,83 +1,56 @@
-#include <iostream>
-#include <queue>
-#include <vector>
-
+#include <bits/stdc++.h>
 using namespace std;
-
-// Function to perform Greedy Best First Search
-void greedyBestFirstSearch(vector<vector<int>>& graph, int start, int goal) {
-    int numNodes = graph.size();
-
-    // Priority queue to store nodes based on their heuristic value
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-
-    // Boolean array to keep track of visited nodes
-    vector<bool> visited(numNodes, false);
-
-    // Vector to store the path from start to goal
-    vector<int> path(numNodes, -1);
-
-    // Enqueue the start node with a heuristic value of 0
-    pq.push(make_pair(0, start));
-    visited[start] = true;
-
-    while (!pq.empty()) {
-        int current = pq.top().second;
-        pq.pop();
-
-        // Check if the goal node is reached
-        if (current == goal) {
-            // Print the path from start to goal
-            vector<int> finalPath;
-            int node = current;
-            while (node != -1) {
-                finalPath.push_back(node);
-                node = path[node];
-            }
-            cout << "Path from start to goal: ";
-            for (int i = finalPath.size() - 1; i >= 0; i--) {
-                cout << finalPath[i] << " ";
-            }
-            cout << endl;
-            return;
-        }
-
-        // Explore the neighboring nodes
-        for (int i = 0; i < numNodes; i++) {
-            if (graph[current][i] != 0 && !visited[i]) {
-                // Enqueue the neighboring nodes with their heuristic values
-                pq.push(make_pair(graph[current][i], i));
-                visited[i] = true;
-                path[i] = current;
-            }
-        }
-    }
-
-    // If the goal node is not reachable
-    cout << "Goal node is not reachable from the start node." << endl;
+typedef pair<int, int> pi;
+vector<vector<pi>> graph;
+void addedge(int x, int y, int cost)
+{
+    graph[x].push_back(make_pair(cost, y));
+    graph[y].push_back(make_pair(cost, x));
 }
-
-int main() {
-    int numNodes;
-    cout << "Enter the number of nodes: ";
-    cin >> numNodes;
-
-    vector<vector<int>> graph(numNodes, vector<int>(numNodes, 0));
-
-    cout << "Enter the adjacency matrix:" << endl;
-    for (int i = 0; i < numNodes; i++) {
-        for (int j = 0; j < numNodes; j++) {
-            cin >> graph[i][j];
+void best_first_search(int actual_Src, int target, int n)
+{
+    vector<bool> visited(n, false);
+    priority_queue<pi, vector<pi>, greater<pi>> pq;
+    pq.push(make_pair(0, actual_Src));
+    int s = actual_Src;
+    visited[s] = true;
+    while (!pq.empty())
+    {
+        int x = pq.top().second;
+        cout << x << " ";
+        pq.pop();
+        if (x == target)
+            break;
+        for (int i = 0; i < graph[x].size(); i++)
+        {
+            if (!visited[graph[x][i].second])
+            {
+                visited[graph[x][i].second] = true;
+                pq.push(make_pair(graph[x][i].first, graph[x][i].second));
+            }
         }
     }
-
-    int start, goal;
-    cout << "Enter the start node: ";
-    cin >> start;
-    cout << "Enter the goal node: ";
-    cin >> goal;
-
-    greedyBestFirstSearch(graph, start, goal);
-
+}
+int main()
+{
+    int v = 14;
+    graph.resize(v);
+    addedge(0, 1, 3);
+    addedge(0, 2, 6);
+    addedge(0, 3, 5);
+    addedge(1, 4, 9);
+    addedge(1, 5, 8);
+    addedge(2, 6, 12);
+    addedge(2, 7, 14);
+    addedge(3, 8, 7);
+    addedge(8, 9, 5);
+    addedge(8, 10, 6);
+    addedge(9, 11, 1);
+    addedge(9, 12, 10);
+    addedge(9, 13, 2);
+    int source = 0;
+    int target = 9;
+    // Function call
+    best_first_search(source, target, v);
     return 0;
 }
